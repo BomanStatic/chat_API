@@ -1,11 +1,18 @@
 import { fetchCollection } from "../mongodb/mongoClient.js";
 
 const CHAT_COLLECTION_NAME = "channels";
+const BROADCAST_ID = "broadcast";
 
-const fetchBroadcastMessages = () => {
-    return "not yet implemented";
+const fetchBroadcastMessages = async () => {
+    const collection = await fetchCollection(CHAT_COLLECTION_NAME);
+    const broadcast = await collection.findOne({
+        _id: BROADCAST_ID,
+    });
+    if (!broadcast) {
+        throw new Error("Could not find the broadcast channel");
+    }
+    return broadcast;
 };
-
 // A function that saves id, newMessage and channelName to the database
 const createNewBroadcastMessage = async (id, newMessage, channelName) => {
     const collection = await fetchCollection(CHAT_COLLECTION_NAME);

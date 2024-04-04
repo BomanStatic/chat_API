@@ -1,7 +1,12 @@
 import chatService from "../service/chatService.js";
 
-const getBroadcastMessages = (req, res) => {
-    return res.status(200).send(chatService.fetchBroadcastMessages());
+const getBroadcastMessages = async (req, res) => {
+    try {
+        const broadcast = await chatService.fetchBroadcastMessages();
+        return res.status(200).send(broadcast);
+    } catch (error) {
+        return res.status(404).send({ message: error.message });
+    }
 };
 
 // Function that get name and message from the reg.body. ID, time, date and channelname creates. We then sends them to service were is should save to the database
