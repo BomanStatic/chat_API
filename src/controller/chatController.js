@@ -33,17 +33,16 @@ const createBroadcastMessage = async (req, res) => {
 
 // handles GET request for retrieving all channels
 const getChannels = async (req, res) => {
-	try {
-	// call the service function to fetch all channels
-	const channels = await chatService.fetchAllChannels();
+    try {
+        // call the service function to fetch all channels
+        const channels = await chatService.fetchAllChannels();
 
-	// return list of channels as a response
-	return res.status(200).send(channels);
-  } catch (e) {
-
-		// send 500 response if there's an error
-		return res.status(500).send({err: "Error fetching channels"})
-	}
+        // return list of channels as a response
+        return res.status(200).send(channels);
+    } catch (e) {
+        // send 500 response if there's an error
+        return res.status(500).send({ err: "Error fetching channels" });
+    }
 };
 
 const getChannelMessages = (req, res) => {
@@ -53,21 +52,20 @@ const getChannelMessages = (req, res) => {
 const createChannel = async (req, res) => {
     const { channelName } = req.body; // takes channel name of request body
 
-	// checks if channelName is missing
+    // checks if channelName is missing
     if (channelName === undefined) {
-		// sends error response if channelName is missing
+        // sends error response if channelName is missing
         return res.status(400).send({ err: "Missing parameter: Channel Name" });
     }
 
     try {
-		// creating a new channel
-	const newChannel = await chatService.createNewChannel(channelName);
+        // creating a new channel
+        const newChannel = await chatService.createNewChannel(channelName);
 
-		// sends 200 response with new channel data
+        // sends 200 response with new channel data
         return res.status(200).send(newChannel);
-
     } catch (e) {
-		// sends 500 response if there's an error creating channel
+        // sends 500 response if there's an error creating channel
         return res.status(500).send({ err: "Error creating channel" });
     }
 };

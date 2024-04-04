@@ -29,14 +29,13 @@ const createNewBroadcastMessage = async (id, newMessage, channelName) => {
 
 // function to fetch all channels from the database with their ids and names
 const fetchAllChannels = async () => {
-	// fetch the channel collection from mongodb
-	const collection = await fetchCollection(CHAT_COLLECTION_NAME);
+    // fetch the channel collection from mongodb
+    const collection = await fetchCollection(CHAT_COLLECTION_NAME);
 
-	// retrieve all channels from collection
-	const channels = await collection.find().toArray();
+    // retrieve all channels from collection
+    const channels = await collection.find().toArray();
 
-	return channels.map(channel => ({id: channel._id, name: channel.channelName}));
-
+    return channels.map((channel) => ({ id: channel._id, name: channel.channelName }));
 };
 
 const fetchChannelMessages = (id) => {
@@ -45,13 +44,13 @@ const fetchChannelMessages = (id) => {
 
 // Async function that creates new channel in database
 const createNewChannel = async (channelName) => {
-	// fetching collection from database
+    // fetching collection from database
     const collection = await fetchCollection(CHAT_COLLECTION_NAME);
 
-	// inserting a new channel into the collection with ChannelName and empty array for messages
+    // inserting a new channel into the collection with ChannelName and empty array for messages
     const result = await collection.insertOne({
         channelName,
-        messages: []
+        messages: [],
     });
     // Return the created channel from MongoDB operation
     return result;
