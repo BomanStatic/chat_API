@@ -26,9 +26,18 @@ const createNewBroadcastMessage = async (id, newMessage, channelName) => {
     );
     return newMessage; // returns newMessage
 };
-const fetchAllChannels = () => {
-    return "not yet implemented";
+
+// function to fetch all channels from the database with their ids and names
+const fetchAllChannels = async () => {
+    // fetch the channel collection from mongodb
+    const collection = await fetchCollection(CHAT_COLLECTION_NAME);
+
+    // retrieve all channels from collection
+    const channels = await collection.find().toArray();
+
+    return channels.map((channel) => ({ id: channel._id, name: channel.channelName }));
 };
+
 
 // A function that takes in the id and then finds that channel in the database if it exist it will return that channel
 const fetchChannelMessages = async (objectId) => {
@@ -41,11 +50,29 @@ const fetchChannelMessages = async (objectId) => {
     }
     return channel; // returns the channel
 };
-const createNewChannel = () => {
-    return "not yet implemented";
+
+
+// Async function that creates new channel in database
+const createNewChannel = async (channelName) => {
+    // fetching collection from database
+    const collection = await fetchCollection(CHAT_COLLECTION_NAME);
+
+    // inserting a new channel into the collection with ChannelName and empty array for messages
+    const result = await collection.insertOne({
+        channelName,
+        messages: [],
+    });
+    // Return the created channel from MongoDB operation
+    return result;
 };
-const createNewChannelMessage = (id) => {
-    return "not yet implemented";
+const createNewChannelMessage = async (id, message) => {
+    const collection = await fetchCollection(CHAT_COLLECTION_NAME);
+    try {
+        await collection.updateOne({ _id: id }, { $push: { messages: message } });
+    } catch (e) {
+        throw new Error("Failed to create new channel message");
+    }
+    return message;
 };
 const removeChannel = (id) => {
     return "not yet implemented";
