@@ -1,4 +1,4 @@
-import { fetchCollection } from "../mongodb/mongoClient";
+import { fetchCollection } from "../mongodb/mongoClient.js";
 
 const CHAT_COLLECTION_NAME = "";
 
