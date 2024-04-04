@@ -1,4 +1,6 @@
 import chatService from "../service/chatService.js";
+import { ObjectId } from "mongodb";
+import { validateChatMessage } from "../utils/chatValidation.js";
 
 const getBroadcastMessages = async (req, res) => {
     try {
@@ -41,8 +43,32 @@ const createChannel = (req, res) => {
     return res.status(200).send(chatService.createNewChannel());
 };
 
-const createChannelMessage = (req, res) => {
-    return res.status(200).send(chatService.createNewChannelMessage());
+const createChannelMessage = async (req, res) => {
+    const id = req.params.id;
+    const { name, message } = req.body;
+    const time = new Date().toLocaleTimeString(); // Creates a time to a string
+    const date = new Date().toLocaleDateString(); // Creates a date to a string
+
+    try {
+        validateChatMessage(name, message);
+    } catch (e) {
+        return res.status(400).send({ msg: e.message });
+    }
+
+    let objectId;
+    try {
+        objectId = new ObjectId(id);
+    } catch (e) {
+        return res.status(400).send({ msg: "Invalid id format" });
+    }
+
+    const newMessage = { name, time, date, message };
+    try {
+        const result = await chatService.createNewChannelMessage(objectId, newMessage);
+        return res.status(200).send(result);
+    } catch (e) {
+        return res.status(500).send({ msg: e.message });
+    }
 };
 
 const deleteChannel = (req, res) => {

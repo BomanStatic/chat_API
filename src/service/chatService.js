@@ -35,8 +35,14 @@ const fetchChannelMessages = (id) => {
 const createNewChannel = () => {
     return "not yet implemented";
 };
-const createNewChannelMessage = (id) => {
-    return "not yet implemented";
+const createNewChannelMessage = async (id, message) => {
+    const collection = await fetchCollection(CHAT_COLLECTION_NAME);
+    try {
+        await collection.updateOne({ _id: id }, { $push: { messages: message } });
+    } catch (e) {
+        throw new Error("Failed to create new channel message");
+    }
+    return message;
 };
 const removeChannel = (id) => {
     return "not yet implemented";
