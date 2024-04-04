@@ -26,9 +26,19 @@ const createNewBroadcastMessage = async (id, newMessage, channelName) => {
     );
     return newMessage; // returns newMessage
 };
-const fetchAllChannels = () => {
-    return "not yet implemented";
+
+// function to fetch all channels from the database with their ids and names
+const fetchAllChannels = async () => {
+	// fetch the channel collection from mongodb
+	const collection = await fetchCollection(CHAT_COLLECTION_NAME);
+
+	// retrieve all channels from collection
+	const channels = await collection.find().toArray();
+
+	return channels.map(channel => ({id: channel._id, name: channel.channelName}));
+
 };
+
 const fetchChannelMessages = (id) => {
     return "not yet implemented";
 };

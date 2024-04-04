@@ -31,8 +31,19 @@ const createBroadcastMessage = async (req, res) => {
     }
 };
 
-const getChannels = (req, res) => {
-    return res.status(200).send(chatService.fetchAllChannels());
+// handles GET request for retrieving all channels
+const getChannels = async (req, res) => {
+	try {
+	// call the service function to fetch all channels
+	const channels = await chatService.fetchAllChannels();
+
+	// return list of channels as a response
+	return res.status(200).send(channels);
+  } catch (e) {
+
+		// send 500 response if there's an error
+		return res.status(500).send({err: "Error fetching channels"})
+	}
 };
 
 const getChannelMessages = (req, res) => {
