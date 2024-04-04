@@ -36,9 +36,27 @@ const getChannels = (req, res) => {
 const getChannelMessages = (req, res) => {
     return res.status(200).send(chatService.fetchChannelMessages());
 };
+// handles creation of new channel
+const createChannel = async (req, res) => {
+    const { channelName } = req.body; // takes channel name of request body
 
-const createChannel = (req, res) => {
-    return res.status(200).send(chatService.createNewChannel());
+	// checks if channelName is missing
+    if (channelName === undefined) {
+		// sends error response if channelName is missing
+        return res.status(400).send({ err: "Missing parameter: Channel Name" });
+    }
+
+    try {
+		// creating a new channel
+	const newChannel = await chatService.createNewChannel(channelName);
+
+		// sends 200 response with new channel data
+        return res.status(200).send(newChannel);
+
+    } catch (e) {
+		// sends 500 response if there's an error creating channel
+        return res.status(500).send({ err: "Error creating channel" });
+    }
 };
 
 const createChannelMessage = (req, res) => {
