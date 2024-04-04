@@ -29,8 +29,17 @@ const createNewBroadcastMessage = async (id, newMessage, channelName) => {
 const fetchAllChannels = () => {
     return "not yet implemented";
 };
-const fetchChannelMessages = (id) => {
-    return "not yet implemented";
+
+// A function that takes in the id and then finds that channel in the database if it exist it will return that channel
+const fetchChannelMessages = async (objectId) => {
+    const collection = await fetchCollection(CHAT_COLLECTION_NAME);
+    const channel = collection.findOne({ _id: objectId }); // Finds the channel by its id
+
+    // if the channel does not exist it throws an error
+    if (!channel) {
+        throw new Error("Cloud not find the Channel");
+    }
+    return channel; // returns the channel
 };
 const createNewChannel = () => {
     return "not yet implemented";

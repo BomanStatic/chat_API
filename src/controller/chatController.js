@@ -1,4 +1,5 @@
 import chatService from "../service/chatService.js";
+import { ObjectId } from "mongodb";
 
 const getBroadcastMessages = async (req, res) => {
     try {
@@ -33,8 +34,25 @@ const getChannels = (req, res) => {
     return res.status(200).send(chatService.fetchAllChannels());
 };
 
-const getChannelMessages = (req, res) => {
-    return res.status(200).send(chatService.fetchChannelMessages());
+// Function that gets the id and checks with the database if that exists
+const getChannelMessages = async (req, res) => {
+    const { id } = req.params;
+    let channel;
+    if (id !== "broadcast") {
+        let objectId;
+
+        try {
+            objectId = new ObjectId(id);
+            console.log(objectId);
+            channel = await chatService.fetchChannelMessages(objectId);
+        } catch (e) {
+            return res.status(400).send({ msg: "invalid id format" });
+        }
+    } else {
+        channel = await chatService.fetchChannelMessages(id);
+    }
+    if (!channel) return res.status(400).send({ msg: "Could not find an order with that id" });
+    res.status(201).send(channel);
 };
 
 const createChannel = (req, res) => {
