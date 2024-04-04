@@ -25,8 +25,19 @@ const fetchAllChannels = () => {
 const fetchChannelMessages = (id) => {
     return "not yet implemented";
 };
-const createNewChannel = () => {
-    return "not yet implemented";
+
+// Async function that creates new channel in database
+const createNewChannel = async (channelName) => {
+	// fetching collection from database
+    const collection = await fetchCollection(CHAT_COLLECTION_NAME);
+
+	// inserting a new channel into the collection with ChannelName and empty array for messages
+    const result = await collection.insertOne({
+        channelName,
+        messages: []
+    });
+    // Return the created channel from MongoDB operation
+    return result;
 };
 const createNewChannelMessage = (id) => {
     return "not yet implemented";
