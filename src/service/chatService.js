@@ -74,8 +74,29 @@ const createNewChannelMessage = async (id, message) => {
     }
     return message;
 };
-const removeChannel = (id) => {
-    return "not yet implemented";
+
+// async function that removes a channel from the database by its ID
+const removeChannel = async (objectId) => {
+
+	try {
+		// fetch collection for channel
+		const collection = await fetchCollection(CHAT_COLLECTION_NAME);
+
+		console.log("Channel ID:", objectId);
+
+		// remove the channel from the collection based on its ID
+		const result = await collection.deleteOne({ _id: objectId});
+		console.log("Delete Result:", result);
+ 		// Check if the channel was successfully removed
+        if (result.deletedCount === 1) {
+            return { success: true, message: "Channel deleted" };
+        } else {
+            return { success: false, message: "Channel not found or already deleted" };
+        }
+    } catch (error) {
+        // Return an error message if an error occurs
+        return { success: false, message: "Error removing channel" };
+    }
 };
 export default {
     fetchBroadcastMessages,

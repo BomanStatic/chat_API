@@ -116,8 +116,36 @@ const createChannelMessage = async (req, res) => {
     }
 };
 
-const deleteChannel = (req, res) => {
-    return res.status(200).send(chatService.removeChannel());
+const deleteChannel = async (req, res) => {
+	try{
+
+		// extract channel ID from request parameters
+		const { id } = req.params;
+
+		let objectId;
+
+		try {
+            objectId = new ObjectId(id);
+        } catch (error) {
+            return res.status(400).send({ message: "Invalid ID format" });
+        }
+
+
+		// call function from service to remove channel
+		const result = await chatService.removeChannel(objectId);
+
+		// check if successfull
+		if (result.success) {
+			return res.status(200).send ({message : result.message});
+		} else {
+			return res.status(404).send ({message: result.message});
+	 }
+	} catch (error) {
+		// return a 500 error response
+		return res.status(500).send({message : "Cannot delete channel"})
+	}
+
+
 };
 
 export default {
