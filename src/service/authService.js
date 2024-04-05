@@ -2,8 +2,10 @@ import jwtUtils from "../utils/jwtUtils.js";
 import bcrypt from "bcrypt";
 import { fetchCollection } from "../mongodb/mongoClient.js";
 
+// Creates a Users collection
 const USER_COLLECTION = "Users";
 
+// Function that checks if the username exiist, if it does it will check the password and then return a token
 const exists = async ({ username, password }) => {
     const collection = await fetchCollection(USER_COLLECTION);
     let result = await collection.findOne({ username });
@@ -29,6 +31,7 @@ const exists = async ({ username, password }) => {
     });
 };
 
+// Function that creates a user based on the username and password, it then saves it to the database
 const create = async ({ username, password }) => {
     const collection = await fetchCollection(USER_COLLECTION);
     let result = await collection.findOne({ username });
