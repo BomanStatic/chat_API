@@ -1,6 +1,6 @@
-import jwtUtils from "../utils/jwtUtils";
+import jwtUtils from "../utils/jwtUtils.js";
 
-const authorize = (req, resp, next) => {
+const authorize = (role) => (req, resp, next) => {
     const bearer = req.headers["authorization"];
 
     try {
@@ -9,6 +9,11 @@ const authorize = (req, resp, next) => {
         }
 
         const token = jwtUtils.verify(bearer.split(" ")[1]);
+
+		if(role && role != token.role) {
+      return resp.status(401).send({err: "User role is not high enough"});
+    }
+
 
         resp.locals.token = token;
     } catch (err) {
