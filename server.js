@@ -1,11 +1,13 @@
 import express from "express";
 import chatRouter from "./src/router/chatRouter.js";
 import authRouter from "./src/router/authRouter.js";
+import cors from "cors"
 
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
+app.use(cors());
 
 app.use(chatRouter);
 app.use(authRouter);

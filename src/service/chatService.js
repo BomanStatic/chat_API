@@ -1,4 +1,5 @@
 import { fetchCollection } from "../mongodb/mongoClient.js";
+import { ObjectId } from "mongodb";
 
 const CHAT_COLLECTION_NAME = "channels";
 const BROADCAST_ID = "broadcast";
@@ -35,7 +36,8 @@ const fetchAllChannels = async () => {
     // retrieve all channels from collection
     const channels = await collection.find().toArray();
 
-    return channels.map((channel) => ({ id: channel._id, name: channel.channelName }));
+    // Map channels to include the ObjectId alongside other properties
+    return channels.map((channel) => ({ _id: channel._id, name: channel.channelName }));
 };
 
 
