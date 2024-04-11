@@ -2,13 +2,12 @@ import chatService from "../service/chatService.js";
 import { ObjectId } from "mongodb";
 import { validateChatMessage } from "../utils/chatValidation.js";
 
-
 const getBroadcastMessages = async (req, res) => {
     try {
         const broadcast = await chatService.fetchBroadcastMessages();
         return res.status(200).send(broadcast);
-    } catch (error) {
-        return res.status(404).send({ message: error.message });
+    } catch (e) {
+        return res.status(404).send({ err: e.message });
     }
 };
 
@@ -28,7 +27,7 @@ const createBroadcastMessage = async (req, res) => {
         const newMessage = { name, time, date, message }; // Creates a new variabel for name, time, date & message
         return res.status(200).send(await chatService.createNewBroadcastMessage(id, newMessage, channelName)); // Sends id newMessage and channelName to service
     } catch (e) {
-        res.status(404).send({ msg: "Messages was not added" });
+        res.status(404).send({ err: "Messages was not added" });
     }
 };
 
@@ -58,12 +57,12 @@ const getChannelMessages = async (req, res) => {
             console.log(objectId);
             channel = await chatService.fetchChannelMessages(objectId);
         } catch (e) {
-            return res.status(400).send({ msg: "invalid id format" });
+            return res.status(400).send({ err: "invalid id format" });
         }
     } else {
         channel = await chatService.fetchChannelMessages(id);
     }
-    if (!channel) return res.status(400).send({ msg: "Could not find an order with that id" });
+    if (!channel) return res.status(400).send({ err: "Could not find an channel with that id" });
     res.status(201).send(channel);
 };
 // handles creation of new channel
@@ -97,14 +96,14 @@ const createChannelMessage = async (req, res) => {
     try {
         validateChatMessage(name, message);
     } catch (e) {
-        return res.status(400).send({ msg: e.message });
+        return res.status(400).send({ err: e.message });
     }
 
     let objectId;
     try {
         objectId = new ObjectId(id);
     } catch (e) {
-        return res.status(400).send({ msg: "Invalid id format" });
+        return res.status(400).send({ err: "Invalid id format" });
     }
 
     const newMessage = { name, time, date, message };
@@ -112,40 +111,36 @@ const createChannelMessage = async (req, res) => {
         const result = await chatService.createNewChannelMessage(objectId, newMessage);
         return res.status(200).send(result);
     } catch (e) {
-        return res.status(500).send({ msg: e.message });
+        return res.status(500).send({ err: e.message });
     }
 };
 
 const deleteChannel = async (req, res) => {
-	try{
+    try {
+        // extract channel ID from request parameters
+        const { id } = req.params;
 
-		// extract channel ID from request parameters
-		const { id } = req.params;
+        let objectId;
 
-		let objectId;
-
-		try {
+        try {
             objectId = new ObjectId(id);
-        } catch (error) {
-            return res.status(400).send({ message: "Invalid ID format" });
+        } catch (e) {
+            return res.status(400).send({ err: "Invalid ID format" });
         }
 
+        // call function from service to remove channel
+        const result = await chatService.removeChannel(objectId);
 
-		// call function from service to remove channel
-		const result = await chatService.removeChannel(objectId);
-
-		// check if successfull
-		if (result.success) {
-			return res.status(200).send ({message : result.message});
-		} else {
-			return res.status(404).send ({message: result.message});
-	 }
-	} catch (error) {
-		// return a 500 error response
-		return res.status(500).send({message : "Cannot delete channel"})
-	}
-
-
+        // check if successfull
+        if (result.success) {
+            return res.status(200).send({ message: result.message });
+        } else {
+            return res.status(404).send({ message: result.message });
+        }
+    } catch (e) {
+        // return a 500 error response
+        return res.status(500).send({ err: "Cannot delete channel" });
+    }
 };
 
 export default {
