@@ -1,7 +1,7 @@
 import chatService from "../service/chatService.js";
 import { ObjectId } from "mongodb";
 import { validateChatMessage } from "../utils/chatValidation.js";
-
+import { getDateTimeStrings } from "../utils/dateTime.js";
 
 const getBroadcastMessages = async (req, res) => {
     try {
@@ -16,8 +16,7 @@ const getBroadcastMessages = async (req, res) => {
 const createBroadcastMessage = async (req, res) => {
     const id = "broadcast";
     const { name, message } = req.body; // Gets name and message
-    const time = new Date().toLocaleTimeString(); // Creates a time to a string
-    const date = new Date().toLocaleDateString(); // Creates a date to a string
+    const { time, date } = getDateTimeStrings();
     const channelName = "Broadcast"; // Creates channel name
 
     //checks if name and message is undefined
@@ -91,8 +90,7 @@ const createChannel = async (req, res) => {
 const createChannelMessage = async (req, res) => {
     const id = req.params.id;
     const { name, message } = req.body;
-    const time = new Date().toLocaleTimeString(); // Creates a time to a string
-    const date = new Date().toLocaleDateString(); // Creates a date to a string
+    const { time, date } = getDateTimeStrings();
 
     try {
         validateChatMessage(name, message);
@@ -117,35 +115,31 @@ const createChannelMessage = async (req, res) => {
 };
 
 const deleteChannel = async (req, res) => {
-	try{
+    try {
+        // extract channel ID from request parameters
+        const { id } = req.params;
 
-		// extract channel ID from request parameters
-		const { id } = req.params;
+        let objectId;
 
-		let objectId;
-
-		try {
+        try {
             objectId = new ObjectId(id);
         } catch (error) {
             return res.status(400).send({ message: "Invalid ID format" });
         }
 
+        // call function from service to remove channel
+        const result = await chatService.removeChannel(objectId);
 
-		// call function from service to remove channel
-		const result = await chatService.removeChannel(objectId);
-
-		// check if successfull
-		if (result.success) {
-			return res.status(200).send ({message : result.message});
-		} else {
-			return res.status(404).send ({message: result.message});
-	 }
-	} catch (error) {
-		// return a 500 error response
-		return res.status(500).send({message : "Cannot delete channel"})
-	}
-
-
+        // check if successfull
+        if (result.success) {
+            return res.status(200).send({ message: result.message });
+        } else {
+            return res.status(404).send({ message: result.message });
+        }
+    } catch (error) {
+        // return a 500 error response
+        return res.status(500).send({ message: "Cannot delete channel" });
+    }
 };
 
 export default {
