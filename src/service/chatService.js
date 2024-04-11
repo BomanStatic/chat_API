@@ -16,7 +16,6 @@ const fetchBroadcastMessages = async () => {
 // A function that saves id, newMessage and channelName to the database
 const createNewBroadcastMessage = async (id, newMessage, channelName) => {
     const collection = await fetchCollection(CHAT_COLLECTION_NAME);
-    // const messageId = (await fetchBroadcastMessages().messages.length) + 1;
     const result = await collection.updateOne(
         {
             _id: id,
@@ -38,7 +37,6 @@ const fetchAllChannels = async () => {
     return channels.map((channel) => ({ id: channel._id, name: channel.channelName }));
 };
 
-
 // A function that takes in the id and then finds that channel in the database if it exist it will return that channel
 const fetchChannelMessages = async (objectId) => {
     const collection = await fetchCollection(CHAT_COLLECTION_NAME);
@@ -50,7 +48,6 @@ const fetchChannelMessages = async (objectId) => {
     }
     return channel; // returns the channel
 };
-
 
 // Async function that creates new channel in database
 const createNewChannel = async (channelName) => {
@@ -77,17 +74,16 @@ const createNewChannelMessage = async (id, message) => {
 
 // async function that removes a channel from the database by its ID
 const removeChannel = async (objectId) => {
+    try {
+        // fetch collection for channel
+        const collection = await fetchCollection(CHAT_COLLECTION_NAME);
 
-	try {
-		// fetch collection for channel
-		const collection = await fetchCollection(CHAT_COLLECTION_NAME);
+        console.log("Channel ID:", objectId);
 
-		console.log("Channel ID:", objectId);
-
-		// remove the channel from the collection based on its ID
-		const result = await collection.deleteOne({ _id: objectId});
-		console.log("Delete Result:", result);
- 		// Check if the channel was successfully removed
+        // remove the channel from the collection based on its ID
+        const result = await collection.deleteOne({ _id: objectId });
+        console.log("Delete Result:", result);
+        // Check if the channel was successfully removed
         if (result.deletedCount === 1) {
             return { success: true, message: "Channel deleted" };
         } else {
