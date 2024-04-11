@@ -14,10 +14,10 @@ router.post("/api/broadcast", chatController.createBroadcastMessage);
 router.get("/api/channel", chatController.getChannels);
 
 // GET	/api/channel/:id	hämtar alla meddelanden i specifik kanal
-router.get("/api/channel/:id",jwtFilter("admin") ,chatController.getChannelMessages);
+router.get("/api/channel/:id", jwtFilter("admin"), chatController.getChannelMessages);
 
 // PUT	/api/channel/	skapar en ny kanal. Kanalens namn ska skickas med.
-router.put("/api/channel",jwtFilter(), chatController.createChannel);
+router.put("/api/channel", jwtFilter(), chatController.createChannel);
 
 // POST	/api/channel/:id	skapa ett nytt meddelande i en specifik kanal som tidigare har skapats. Innehållet i ett meddelande bör vara minst anvsändare och innehåll.
 router.post("/api/channel/:id", jwtFilter(), chatController.createChannelMessage);

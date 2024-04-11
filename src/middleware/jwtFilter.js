@@ -10,14 +10,12 @@ const authorize = (role) => (req, resp, next) => {
 
         const token = jwtUtils.verify(bearer.split(" ")[1]);
 
-		if(role && role != token.role) {
-      return resp.status(401).send({err: "User role is not high enough"});
-    }
-
+        if (role && role != token.role) {
+            return resp.status(401).send({ err: "User role is not high enough" });
+        }
 
         resp.locals.token = token;
     } catch (err) {
-        console.log(err);
         if (err.name == "JsonWebTokenError") {
             return resp.status(400).send({ err: "Invalid authorization signature" });
         } else if (err.name == "TokenExpiredError") {

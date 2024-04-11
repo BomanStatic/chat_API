@@ -1,12 +1,11 @@
 import { fetchCollection } from "../mongodb/mongoClient.js";
 
 const CHAT_COLLECTION_NAME = "channels";
-const BROADCAST_ID = "broadcast";
 
-const fetchBroadcastMessages = async () => {
+const fetchBroadcastMessages = async (id) => {
     const collection = await fetchCollection(CHAT_COLLECTION_NAME);
     const broadcast = await collection.findOne({
-        _id: BROADCAST_ID,
+        _id: id,
     });
     if (!broadcast) {
         throw new Error("Could not find the broadcast channel");
@@ -16,7 +15,7 @@ const fetchBroadcastMessages = async () => {
 // A function that saves id, newMessage and channelName to the database
 const createNewBroadcastMessage = async (id, newMessage, channelName) => {
     const collection = await fetchCollection(CHAT_COLLECTION_NAME);
-    const result = await collection.updateOne(
+    await collection.updateOne(
         {
             _id: id,
         },
@@ -78,11 +77,8 @@ const removeChannel = async (objectId) => {
         // fetch collection for channel
         const collection = await fetchCollection(CHAT_COLLECTION_NAME);
 
-        console.log("Channel ID:", objectId);
-
         // remove the channel from the collection based on its ID
         const result = await collection.deleteOne({ _id: objectId });
-        console.log("Delete Result:", result);
         // Check if the channel was successfully removed
         if (result.deletedCount === 1) {
             return { success: true, message: "Channel deleted" };
