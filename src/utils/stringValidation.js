@@ -21,3 +21,25 @@ export const validateChatMessage = (name, message) => {
         throw new Error("One or more parameters are empty");
     }
 };
+/**
+ * Validates the name parameters for a channel.
+ *
+ * @param {string} channelName - The name of the channel.
+ * @throws {Error} If the channelName is missing, not a string, or empty.
+ */
+export const validateChannelName = (channelName) => {
+    //checks if channelName exists
+    if (!channelName) {
+        throw new Error("Missing channel name");
+    }
+
+    //checks if channelName are strings
+    if (typeof channelName !== "string") {
+        throw new Error("Invalid type of channel name");
+    }
+
+    //checks if channelName is not empty
+    if (channelName.trim().length < 1) {
+        throw new Error("Channel name can not be empty");
+    }
+};
