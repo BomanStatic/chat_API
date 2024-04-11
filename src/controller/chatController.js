@@ -3,9 +3,11 @@ import { ObjectId } from "mongodb";
 import { validateChatMessage, validateChannelName } from "../utils/stringValidation.js";
 import { getDateTimeStrings } from "../utils/dateTime.js";
 
+const BROADCAST_ID = "broadcast";
+
 const getBroadcastMessages = async (req, res) => {
     try {
-        const broadcast = await chatService.fetchBroadcastMessages();
+        const broadcast = await chatService.fetchBroadcastMessages(BROADCAST_ID);
         return res.status(200).send(broadcast);
     } catch (e) {
         return res.status(404).send({ err: e.message });
@@ -14,7 +16,7 @@ const getBroadcastMessages = async (req, res) => {
 
 // Function that get name and message from the reg.body. ID, time, date and channelname creates. We then sends them to service were is should save to the database
 const createBroadcastMessage = async (req, res) => {
-    const id = "broadcast";
+    const id = BROADCAST_ID;
     const { name, message } = req.body; // Gets name and message
     const { time, date } = getDateTimeStrings();
     const channelName = "Broadcast"; // Creates channel name
@@ -51,12 +53,11 @@ const getChannels = async (req, res) => {
 const getChannelMessages = async (req, res) => {
     const { id } = req.params;
     let channel;
-    if (id !== "broadcast") {
+    if (id !== BROADCAST_ID) {
         let objectId;
 
         try {
             objectId = new ObjectId(id);
-            console.log(objectId);
             channel = await chatService.fetchChannelMessages(objectId);
         } catch (e) {
             return res.status(400).send({ err: "invalid id format" });
