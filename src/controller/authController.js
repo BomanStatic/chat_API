@@ -12,7 +12,7 @@ const login = async (req, res) => {
         const token = await authService.exists({ username, password });
         res.status(200).send({ token });
     } catch (e) {
-        return res.status(401).send({ msg: "Failed to login" });
+        return res.status(401).send({ err: "Failed to login" });
     }
 };
 
@@ -26,7 +26,7 @@ const signUp = async (req, res) => {
 
     await authService.create({ username, password });
 
-    return res.status(201).send({ msg: "Account was created" });
+    return res.status(201).send({ err: "Account was created" });
 };
 
 // exports login, signUp
